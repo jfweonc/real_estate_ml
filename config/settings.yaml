@@ -1,0 +1,47 @@
+project:
+  name: real_estate_ml
+  config_version: 1
+
+paths:
+  data_dir: data
+  raw_dir: data/raw
+  interim_dir: data/interim
+  processed_dir: data/processed
+  downloads_dir: data/downloads
+  logs_dir: data/logs
+  artifacts_dir: data/artifacts
+  features_dir: data/features
+  models_dir: data/models
+  runs_dir: data/artifacts/runs
+  reports_dir: data/artifacts/reports
+  cache_dir: data/cache
+
+etl:
+  batch_size: 100
+  concurrency: 3
+  delay_ms_between_requests: 500
+  user_agent: "relml-bot"   # or leave it null/blank if you prefer
+
+playwright:
+  headless: false
+  timeout_ms: 30000
+  storage_state: "artifacts/storage-state.json"
+
+limits:
+  max_images_per_listing: 60
+  max_retries: 3
+
+geocoding:
+  provider: census             # census | geocodio | mapbox | google
+  cache_dir: data/cache/geocode
+  dedupe_normalize: true
+  census:
+    single_url: "https://geocoding.geo.census.gov/geocoder/locations/onelineaddress"
+    batch_url:  "https://geocoding.geo.census.gov/geocoder/locations/addressbatch"
+    benchmark:  "Public_AR_Current"
+    vintage:    "Current_Current"
+    batch_max_rows: 10000
+    batch_max_size_mb: 5
+    rate_limit_per_min: 300
+    retry_max: 3
+    retry_backoff_ms: 500

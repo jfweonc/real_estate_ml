@@ -1,0 +1,17 @@
+{
+  "name": "real-estate-ml",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "pw:install": "npx playwright install --with-deps",
+    "test:e2e": "playwright test -c playwright.config.ts",
+    "codegen": "playwright codegen"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.47.2",
+    "dotenv": "16.4.5",
+    "typescript": "5.5.4",
+    "ts-node": "10.9.2"
+  }
+}

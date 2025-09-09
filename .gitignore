@@ -1,0 +1,26 @@
+# secrets
+.env
+.env.*
+
+# python
+__pycache__/
+*.py[cod]
+.venv/
+
+# node
+node_modules/
+
+# data & artifacts (large & generated)
+data/
+artifacts/
+logs/
+playwright-report/
+test-results/
+.pytest_cache/
+
+# build caches
+.cache/
+
+# OS noise
+Thumbs.db
+Desktop.ini
