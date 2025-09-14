@@ -3,3 +3,4 @@ pydantic-settings==2.5.2
 PyYAML==6.0.2
 python-dotenv==1.0.1
 pytest==8.3.3
+tzdata>=2024.1

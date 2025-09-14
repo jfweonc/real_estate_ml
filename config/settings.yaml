@@ -4,8 +4,8 @@ project:
 
 paths:
   data_dir: data
-  raw_dir: data/raw
-  interim_dir: data/interim
+  raw_dir: &RAW data/raw
+  interim_dir: &INT data/interim
   processed_dir: data/processed
   downloads_dir: data/downloads
   logs_dir: data/logs
@@ -13,7 +13,7 @@ paths:
   features_dir: data/features
   models_dir: data/models
   runs_dir: data/artifacts/runs
-  reports_dir: data/artifacts/reports
+  reports_dir: &REP data/artifacts/reports
   cache_dir: data/cache
 
 etl:
@@ -45,3 +45,92 @@ geocoding:
     rate_limit_per_min: 300
     retry_max: 3
     retry_backoff_ms: 500
+
+phase05:
+  project:
+    timezone: "America/Chicago"        # all “today/yesterday” math uses this tz
+    raw: *RAW
+    interim: *INT
+    reports: *REP
+    images_pattern: "{domain}/images/{listing_key}/"  # resolved under data/raw/
+
+  coverage:
+    date_window:
+      from: "1996-01-01"
+      to: "!yesterday"                  # compute in project.timezone
+      date_field_default: "MatrixModifiedDT"
+      allowed_date_fields: ["MatrixModifiedDT","ListDate","CloseDate"]
+
+  images:
+    policy:
+      reasons: ["no_images","partial","active_changed","late_active_change"]
+      active_statuses:
+        - "Active"
+        - "Option Pending"
+        - "Pending Continue to Show"
+        - "Back On Market"
+      redownload:
+        active:
+          on_missing_or_partial: true
+          on_photocount_change: true
+          on_album_change: true
+        active_to_sold:
+          on_missed_active_change: true   # one-time catch-up, then retire
+    sources: ["manual","automation"]
+    zip_filenames: "{listingNumber}_{imageNumber}.jpg"
+
+  selector_defaults:
+    zip:
+      default: "all"                     # --zip all unless specified
+    date:
+      field_default: "MatrixModifiedDT"
+
+  csv_ingest:
+    encoding: "utf-8"
+    delimiter: ","
+    quotechar: "\""
+    required_columns:                     # minimal clean slice (now includes PostalCode)
+      - "MLS #"
+      - "PropertyType"
+      - "Status"
+      - "MatrixModifiedDT"
+      - "ListDate"
+      - "CloseDate"
+      - "ListPrice"
+      - "ClosePrice"
+      - "PhotoCount"
+      - "PostalCode"
+    quarantine_reasons: ["bad_quote","column_mismatch","missing_required_col"]
+    row_hash:
+      algo: "sha256"
+      normalize:
+        trim_whitespace: true
+        collapse_internal_ws: true
+        unify_quotes: true
+        numeric_fields: ["ListPrice","ClosePrice","PhotoCount"]
+        numeric_format: "int"
+        date_fields: ["MatrixModifiedDT","ListDate","CloseDate"]
+        date_format: "iso8601"
+        null_repr: ""
+        unicode_nfkc: true
+
+  postal_code:
+    normalize_to_zip5: true
+    treat_00000_as_null: true
+    invalid_to_null: true
+
+  reports:
+    csv_enabled: true
+    html_enabled: false
+    filenames:
+      coverage_sale: "coverage_sale.csv"
+      coverage_rental: "coverage_rental.csv"
+      quarantine: "quarantine_rows.csv"
+      conflicts: "conflicts.csv"
+
+  manifests:
+    missing_dates: "data/interim/missing_dates.parquet"
+    selected_listings: "data/interim/selected_listings.parquet"
+
+  logging:
+    level: "INFO"

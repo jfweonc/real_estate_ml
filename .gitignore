@@ -24,3 +24,12 @@ test-results/
 # OS noise
 Thumbs.db
 Desktop.ini
+
+# data artifacts
+/data/raw/**
+/data/interim/**
+/data/reports/**
+!data/**/.gitkeep
+
+# local env
+.env

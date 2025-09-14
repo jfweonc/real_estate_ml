@@ -10,3 +10,21 @@ services:
     volumes:
       - ./:/app
       - ./data:/app/data
+    environment:
+      - SETTINGS_PATH=config/settings.yaml
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app
+      POSTGRES_DB: real_estate_ml
+    ports: ["5432:5432"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app -d real_estate_ml"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+volumes:
+  pgdata:
