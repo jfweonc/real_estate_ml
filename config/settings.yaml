@@ -15,7 +15,9 @@ paths:
   runs_dir: data/artifacts/runs
   reports_dir: &REP data/artifacts/reports
   cache_dir: data/cache
-
+db:
+  url: ${DATABASE_URL}
+  
 etl:
   batch_size: 100
   concurrency: 3
@@ -63,7 +65,7 @@ phase05:
 
   images:
     policy:
-      reasons: ["no_images","partial","active_changed","late_active_change"]
+      reasons: ["no_images","partial","late_active_change"]
       active_statuses:
         - "Active"
         - "Option Pending"

@@ -12,8 +12,12 @@ services:
       - ./data:/app/data
     environment:
       - SETTINGS_PATH=config/settings.yaml
+    depends_on:
+      db:
+        condition: service_healthy
+
   db:
-    image: postgres:16
+    image: postgres:16.10
     environment:
       POSTGRES_USER: app
       POSTGRES_PASSWORD: app
@@ -26,5 +30,6 @@ services:
       retries: 20
     volumes:
       - pgdata:/var/lib/postgresql/data
+      - ./:/app:ro    # 👈 make your repo visible to the db container (read-only)
 volumes:
   pgdata:

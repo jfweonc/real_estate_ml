@@ -4,6 +4,7 @@ from typing import Optional
 import yaml
 from pydantic import BaseModel
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import Field, AliasChoices
 
 
 class EnvSettings(BaseSettings):
@@ -12,7 +13,11 @@ class EnvSettings(BaseSettings):
     MAPTILER_API_KEY: Optional[str] = None
     HEADLESS: Optional[bool] = True
 
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
+    # ⬅️ make extras explicit so typos are caught, and read .env
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="forbid")
+
+    # ⬅️ NEW: where DATABASE_URL lands
+    database_url: str = Field(validation_alias=AliasChoices("DATABASE_URL", "database_url"))
 
 
 class Settings(BaseModel):
