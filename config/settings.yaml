@@ -17,12 +17,30 @@ paths:
   cache_dir: data/cache
 db:
   url: ${DATABASE_URL}
-  
+
 etl:
   batch_size: 100
   concurrency: 3
   delay_ms_between_requests: 500
   user_agent: "relml-bot"   # or leave it null/blank if you prefer
+  required_headers:
+    - "MLS #"
+    - "PropertyType"
+    - "Status"
+    - "MatrixModifiedDT"
+    - "ListingContractDate"
+    - "CloseDate"
+    - "ListPrice"
+    - "ClosePrice"
+    - "PhotoCount"
+    - "PostalCode"
+  csv:
+    delimiter: ","
+    quotechar: '"'
+    encoding: "utf-8"
+    strict: true
+  zip_normalization:
+    invalid_zip5: ["00000"]
 
 playwright:
   headless: false
