@@ -39,8 +39,16 @@ etl:
     quotechar: '"'
     encoding: "utf-8"
     strict: true
+    sniffer_delimiters: [","] # [",", ";", "\t"]
+
   zip_normalization:
     invalid_zip5: ["00000"]
+  # File discovery
+  data_subfolder_suffix: Data      # recurse into subfolders whose names end with this (case-insensitive)
+  # Legacy → canonical mapping (applied to header row before validation)
+  header_aliases:
+    ListDate: ListingContractDate
+    ListingDate: ListingContractDate
 
 playwright:
   headless: false

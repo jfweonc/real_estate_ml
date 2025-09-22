@@ -12,9 +12,12 @@ services:
       - ./data:/app/data
     environment:
       - SETTINGS_PATH=config/settings.yaml
+      - PYTHONPATH=/app/src
+      - DATABASE_URL=postgresql://app:app@db:5432/real_estate_ml
     depends_on:
       db:
         condition: service_healthy
+    restart: unless-stopped
 
   db:
     image: postgres:16.10
